@@ -79,7 +79,8 @@ namespace contactsApi.Controllers
 
             return NoContent();
         }
-
+        
+        // CREATE
         // POST: api/Contacts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -92,7 +93,7 @@ namespace contactsApi.Controllers
             _context.Contacts.Add(contact);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetContact", new { id = contact.Id }, contact);
+            return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
         }
 
         // DELETE: api/Contacts/5

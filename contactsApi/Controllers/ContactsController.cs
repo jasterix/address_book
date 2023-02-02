@@ -11,7 +11,7 @@ namespace contactsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class ContactsController : ControllerBase
     {
         private readonly ILogger<ContactsController> _logger;
@@ -23,35 +23,35 @@ namespace contactsApi.Controllers
             _logger = logger;
         }
 
+        // Get all
         // GET: api/Contacts
         [HttpGet(Name = "GetContacts")]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContacts()
         {
-          if (_context.Contacts == null)
-          {
-              return NotFound();
-          }
-            return await _context.Contacts.ToListAsync();
-        }
-
-        // GET: api/Contacts/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Contact>> GetContact(long id)
-        {
-          if (_context.Contacts == null)
-          {
-              return NotFound();
-          }
-            var contact = await _context.Contacts.FindAsync(id);
-
-            if (contact == null)
+            if (_context.Contacts == null)
             {
                 return NotFound();
             }
-
-            return contact;
+            return await _context.Contacts.ToListAsync();
         }
 
+        // CREATE
+        // POST: api/Contacts
+        // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Contact>> PostContact(Contact contact)
+        {
+            if (_context.Contacts == null)
+            {
+                return Problem("Entity set 'ContactContext.Contacts'  is null.");
+            }
+            _context.Contacts.Add(contact);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
+        }
+
+        // Update
         // PUT: api/Contacts/5
         // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -83,22 +83,6 @@ namespace contactsApi.Controllers
             return NoContent();
         }
 
-        // CREATE
-        // POST: api/Contacts
-        // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Contact>> PostContact(Contact contact)
-        {
-          if (_context.Contacts == null)
-          {
-              return Problem("Entity set 'ContactContext.Contacts'  is null.");
-          }
-            _context.Contacts.Add(contact);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
-        }
-
         // Alternate way of formatting actions 
         // [HttpPost]
         // public IActionResult CreateContact(CreateContactRequest request)
@@ -120,6 +104,24 @@ namespace contactsApi.Controllers
         //     value: response
         // );
         // }
+
+        // GET: api/Contacts/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Contact>> GetContact(long id)
+        {
+            if (_context.Contacts == null)
+            {
+                return NotFound();
+            }
+            var contact = await _context.Contacts.FindAsync(id);
+
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            return contact;
+        }
 
         // DELETE: api/Contacts/5
         [HttpDelete("{id}")]

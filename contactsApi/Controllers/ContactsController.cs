@@ -11,17 +11,20 @@ namespace contactsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class ContactsController : ControllerBase
     {
+        private readonly ILogger<ContactsController> _logger;
         private readonly ContactContext _context;
 
-        public ContactsController(ContactContext context)
+        public ContactsController(ContactContext context, ILogger<ContactsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Contacts
-        [HttpGet]
+        [HttpGet(Name = "GetContacts")]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContacts()
         {
           if (_context.Contacts == null)
@@ -50,7 +53,7 @@ namespace contactsApi.Controllers
         }
 
         // PUT: api/Contacts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutContact(long id, Contact contact)
         {
@@ -79,10 +82,10 @@ namespace contactsApi.Controllers
 
             return NoContent();
         }
-        
+
         // CREATE
         // POST: api/Contacts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Contact>> PostContact(Contact contact)
         {
@@ -95,6 +98,28 @@ namespace contactsApi.Controllers
 
             return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
         }
+
+        // Alternate way of formatting actions 
+        // [HttpPost]
+        // public IActionResult CreateContact(CreateContactRequest request)
+        // {
+        //     var contact = new Contact(
+        //         Guid.NewGuid(),
+        //         request.Created,
+        //         request.Name
+        //     );
+
+        // var response = new ContactResponse(
+        //     contactsApi.Id,
+        //     contactsApi.name
+        // );
+
+        //     return CreatedAtAction(
+        //     ActionNameAttribute: nameOf(GetContact),
+        //     routeValues: new { id= contactsApi.Id},
+        //     value: response
+        // );
+        // }
 
         // DELETE: api/Contacts/5
         [HttpDelete("{id}")]

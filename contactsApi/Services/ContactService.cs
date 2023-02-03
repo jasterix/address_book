@@ -19,19 +19,18 @@ public static class ContactService
 
     public static Contact? Get(int id) => Contacts.FirstOrDefault(p => p.Id == id);
 
-    public static void Add(Contact contact)
+    public static List<Contact> Add(Contact contact)
     {
         contact.Id = nextId++;
         Contacts.Add(contact);
+        return GetAll();
     }
 
-    public static void Delete(int id)
+    public static List<Contact> Delete(int id)
     {
         var contact = Get(id);
-        if (contact is null)
-            return;
-
-        Contacts.Remove(contact);
+        Contacts.Remove(contact ?? throw new System.Exception("Contact not found"));
+        return GetAll();
     }
 
     public static void Update(Contact contact)

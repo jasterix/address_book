@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ContactContext>(opt =>
-opt.UseInMemoryDatabase("Contacts"));
+    opt.UseInMemoryDatabase("Contacts")
+);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -25,10 +26,11 @@ if (app.Environment.IsDevelopment())
                 c.RoutePrefix = string.Empty;
             });
 }
-app.UseSwagger(options =>
-{
-    options.SerializeAsV2 = true;
-});
+// Necessary??
+// app.UseSwagger(options =>
+// {
+//     options.SerializeAsV2 = true;
+// });
 
 app.UseHttpsRedirection();
 app.UseCors();
@@ -36,12 +38,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 
-// ERROR: ASP0014: Suggest using top level route registrations
-// app.UseEndpoints(endpoints =>
-// {
-//     endpoints.MapControllers();
-// });
-
+// warning: ASP0014: Suggest using top level route registrations
 app.UseEndpoints(endpoints =>
     {
         endpoints.MapControllerRoute(

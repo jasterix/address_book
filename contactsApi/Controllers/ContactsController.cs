@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using contactsApi.Models;
+using contactsApi.Services;
 
 namespace contactsApi.Controllers
 {
@@ -25,7 +21,7 @@ namespace contactsApi.Controllers
 
         // Get all
         // GET: api/Contacts
-        [HttpGet(Name = "GetContacts")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContacts()
         {
             if (_context.Contacts == null)
@@ -34,6 +30,10 @@ namespace contactsApi.Controllers
             }
             return await _context.Contacts.ToListAsync();
         }
+
+        // [HttpGet]
+        // public ActionResult<List<Contact>> GetAll() =>
+        //     ContactService.GetAll();
 
         // CREATE
         // POST: api/Contacts

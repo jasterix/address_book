@@ -12,10 +12,11 @@ public class ContactContext : DbContext
     // Create new entity class
     public DbSet<Contact> Contacts { get; set; } = null!;
 
+    // Added connection string to Program.cs instead. Not needed here
     // Override OnConfiguring and provide connection string to it
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb; Database=Contacts; Integrated Security=True;");
-        base.OnConfiguring(optionsBuilder);
-    }
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // {
+    //     optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb; Database=Contacts; Integrated Security=True;");
+    //     base.OnConfiguring(optionsBuilder);
+    // }
 }

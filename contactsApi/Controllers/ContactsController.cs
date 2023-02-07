@@ -24,12 +24,6 @@ namespace contactsApi.Controllers
         [HttpGet(Name = "GetAll")]
         public async Task<ActionResult<List<Contact>>> GetContacts()
         {
-            var total = _context.Contacts.ToListAsync().Result.Count;
-            if (!(total > 0))
-            {
-                // Seed data
-                return ContactService.GetAll();
-            }
             return await _context.Contacts.ToListAsync();
         }
 
@@ -39,14 +33,30 @@ namespace contactsApi.Controllers
         [HttpPost(Name = "Create")]
         public async Task<ActionResult<Contact>> PostContact(Contact contact)
         {
-            if (_context.Contacts == null)
+            try
             {
-                return Problem("Entity set 'ContactContext.Contacts'  is null.");
-            }
-            _context.Contacts.Add(contact);
-            await _context.SaveChangesAsync();
+                if (_context.Contacts == null)
+                {
+                    return Problem("Entity set 'ContactContext.Contacts'  is null.");
+                }
 
-            return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
+                else if (contact.Name is null || contact.PhoneNumber is null)
+                {
+                    _logger.LogError("All fields ae required");
+                    return BadRequest("All fields ae required");
+                }
+
+                _context.Contacts.Add(contact);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"Something went wrong inside UpdateOwner action: {exception.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error creating new contact record");
+            }
         }
 
         // Read
@@ -72,29 +82,35 @@ namespace contactsApi.Controllers
         // PUT: api/Contacts/5
         // To protect from over-posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}", Name = "Update")]
-        public async Task<IActionResult> PutContact(long id, Contact contact)
+        public async Task<IActionResult> PutContact(long id, [FromBody] Contact contact)
         {
-            if (id != contact.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(contact).State = EntityState.Modified;
-
             try
             {
+                if (id != contact.Id)
+                {
+                    return Content("Employee ID mismatch");
+                }
+
+                if (contact is null)
+                {
+                    _logger.LogError("Contact object sent from client is null.");
+                    return BadRequest("Contact object is null");
+                }
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError("Invalid contact object sent from client.");
+                    return BadRequest("Invalid model object");
+                }
+
+                _context.Entry(contact).State = EntityState.Modified;
+
+
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
-                if (!ContactExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error updating data");
             }
 
             return NoContent();
@@ -114,11 +130,15 @@ namespace contactsApi.Controllers
             {
                 return NotFound();
             }
-
+            var stateBeforeAdd = _context.Entry(contact).State;
+            _context.Add(contact);
+            var stateAfterAdd = _context.Entry(contact).State;
+            _context.SaveChanges();
+            var stateAfterSaveChanges = _context.Entry(contact).State;
             _context.Contacts.Remove(contact);
             await _context.SaveChangesAsync();
 
-            return Content("User {id} has been deleted");
+            return Content("User ${id} has been deleted");
         }
 
         private bool ContactExists(long id)

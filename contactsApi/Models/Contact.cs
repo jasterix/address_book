@@ -1,4 +1,5 @@
 namespace contactsApi.Models;
+using System.ComponentModel.DataAnnotations;
 
 public class Contact
 {

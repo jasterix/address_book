@@ -6,8 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// connection string shouldn't be hardcoded but in appsettings.json instead
 builder.Services.AddDbContext<ContactContext>(options =>
-    options.UseSqlServer("Server=(localdb)\\mssqllocaldb; Database=Contacts; Integrated Security=True;")
+    options.UseSqlite("Data Source=contacts.db;")
 );
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -2,14 +2,13 @@ import React, { useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import axios, { AxiosResponse } from "axios";
+import { urlContacts } from "./endpoints";
 
 function App() {
 	useEffect(() => {
-		axios
-			.get("http://localhost:5240/api/Contacts")
-			.then((response: AxiosResponse<any>) => {
-				console.log(response.data);
-			});
+		axios.get(urlContacts).then((response: AxiosResponse<any>) => {
+			console.log(response.data);
+		});
 	}, []);
 
 	return (

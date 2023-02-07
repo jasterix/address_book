@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@fluentui/react": "^8.105.5",
+    "install": "^0.13.0",
+    "npm": "^9.4.2"
+  }
+}
